@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (using nektos/act)"
-echo "===================================================================="
+echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (Alpine)"
+echo "========================================================="
 
 # 1. Check Docker prerequisite
 if ! command -v docker &> /dev/null; then
   echo "❌ Error: Docker is not installed or not in PATH."
-  echo "👉 Please install Docker Desktop (or OrbStack) first to run local CI/CD with act."
+  echo "👉 Please install Docker Desktop (or OrbStack) first."
   exit 1
 fi
 
@@ -29,38 +29,31 @@ if ! command -v act &> /dev/null; then
   fi
 fi
 
-echo "✅ Prerequisites checked (Docker & act are available)."
+echo "✅ Docker & act are available."
 echo ""
 
-# 3. List GitHub Actions jobs defined in .github/workflows/ci.yml
-echo "📋 Defined Workflows / Jobs in .github/workflows/ci.yml:"
+# 3. List GitHub Actions jobs
 act -l
-
 echo ""
-# Allow dry-run option (-n)
+
+# Dry-run option
 if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
-  echo "🔍 Dry-run mode enabled (-n). Verifying workflow syntax without pulling images..."
+  echo "🔍 Dry-run mode enabled (-n). Verifying workflow syntax..."
   act push -n
   echo "✅ Workflow syntax is valid!"
   exit 0
 fi
 
-# Use lightweight / micro image (node:20-alpine or catthehacker/ubuntu:act-slim) to save disk space
-LIGHTWEIGHT_IMAGE="${2:-node:20-alpine}"
-
-echo "📦 Using lightweight image for local runner to save disk space: $LIGHTWEIGHT_IMAGE"
-echo "▶️ Running local CI/CD push event trigger..."
+echo "📦 Running CI/CD using lightweight Alpine container (node:20-alpine)..."
 echo "--------------------------------------------------------------------"
 
-ACT_ARGS="-P ubuntu-latest=$LIGHTWEIGHT_IMAGE"
+# Use lightweight node:20-alpine image to save disk space
+ACT_ARGS="-P ubuntu-latest=node:20-alpine"
 
-# Detect Apple Silicon (arm64)
 if [[ "$(uname -m)" == "arm64" ]]; then
-  echo "🍏 Detected Apple Silicon (arm64). Applying container architecture flags..."
   ACT_ARGS="$ACT_ARGS --container-architecture linux/amd64"
 fi
 
-# Execute act with lightweight container
 act push $ACT_ARGS --reuse
 
 echo ""

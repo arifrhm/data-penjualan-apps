@@ -4,16 +4,41 @@ set -e
 echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (Alpine)"
 echo "========================================================="
 
+# Auto-detect active Docker socket (supports OrbStack, Docker Desktop, Colima, standard socket)
+if [ -z "$DOCKER_HOST" ]; then
+  ORBSTACK_SOCKET="$HOME/.orbstack/run/docker.sock"
+  DOCKER_DESKTOP_SOCKET="$HOME/.docker/run/docker.sock"
+  VAR_SOCKET="/var/run/docker.sock"
+
+  if [ -S "$ORBSTACK_SOCKET" ]; then
+    export DOCKER_HOST="unix://$ORBSTACK_SOCKET"
+  elif [ -S "$VAR_SOCKET" ]; then
+    export DOCKER_HOST="unix://$VAR_SOCKET"
+  elif [ -S "$DOCKER_DESKTOP_SOCKET" ]; then
+    export DOCKER_HOST="unix://$DOCKER_DESKTOP_SOCKET"
+  else
+    # Try getting endpoint from docker context
+    CONTEXT_ENDPOINT=$(docker context inspect --format '{{.Endpoints.docker.Host}}' 2>/dev/null || true)
+    if [ -n "$CONTEXT_ENDPOINT" ]; then
+      export DOCKER_HOST="$CONTEXT_ENDPOINT"
+    fi
+  fi
+fi
+
+if [ -n "$DOCKER_HOST" ]; then
+  echo "🔌 Using Docker Host: $DOCKER_HOST"
+fi
+
 # 1. Check Docker prerequisite
 if ! command -v docker &> /dev/null; then
   echo "❌ Error: Docker is not installed or not in PATH."
-  echo "👉 Please install Docker Desktop (or OrbStack) first."
+  echo "👉 Please install Docker Desktop or OrbStack first."
   exit 1
 fi
 
 if ! docker info &> /dev/null; then
   echo "❌ Error: Docker daemon is not running."
-  echo "👉 Please start Docker Desktop / Docker daemon and try again."
+  echo "👉 Please start Docker / OrbStack and try again."
   exit 1
 fi
 

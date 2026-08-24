@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (Debian Slim)"
-echo "============================================================="
+echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (act-slim)"
+echo "=========================================================="
 
 # Auto-detect active Docker socket (supports OrbStack, Docker Desktop, Colima, standard socket)
 if [ -z "$DOCKER_HOST" ]; then
@@ -76,15 +76,15 @@ if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
   exit 0
 fi
 
-echo "📦 Running CI/CD using lightweight Debian Slim container (node:20-slim)..."
-echo "------------------------------------------------------------------------"
+echo "📦 Running CI/CD using lightweight slim container (catthehacker/ubuntu:act-slim)..."
+echo "---------------------------------------------------------------------------------"
 
-# Use lightweight node:20-slim (Debian glibc, ~200MB, has bash & glibc compatibility)
-ACT_ARGS="-P ubuntu-latest=node:20-slim"
+# Use official act-slim image (~400MB, includes bash & curl, glibc compatible)
+ACT_ARGS="-P ubuntu-latest=catthehacker/ubuntu:act-slim"
 
-# Native architecture execution for Apple Silicon arm64 or x86
+# Apply container architecture flag if Apple Silicon
 if [[ "$(uname -m)" == "arm64" ]]; then
-  ACT_ARGS="$ACT_ARGS --container-architecture linux/arm64"
+  ACT_ARGS="$ACT_ARGS --container-architecture linux/amd64"
 fi
 
 act push $ACT_ARGS --reuse

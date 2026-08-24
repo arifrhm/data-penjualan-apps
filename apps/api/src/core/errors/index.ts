@@ -1,0 +1,27 @@
+export class AppError extends Error {
+  constructor(
+    public statusCode: number,
+    public message: string
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message = 'Resource not found') {
+    super(404, message);
+  }
+}
+
+export class BadRequestError extends AppError {
+  constructor(message = 'Bad request') {
+    super(400, message);
+  }
+}
+
+export class ValidationError extends AppError {
+  constructor(message = 'Validation error') {
+    super(422, message);
+  }
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (act-slim)"
+echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (JS Runner)"
 echo "=========================================================="
 
 # Auto-detect active Docker socket (supports OrbStack, Docker Desktop, Colima, standard socket)
@@ -76,13 +76,12 @@ if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
   exit 0
 fi
 
-echo "📦 Running CI/CD using lightweight slim container (catthehacker/ubuntu:act-slim)..."
+echo "📦 Running CI/CD using catthehacker JS image (catthehacker/ubuntu:js-latest)..."
 echo "---------------------------------------------------------------------------------"
 
-# Use official act-slim image (~400MB, includes bash & curl, glibc compatible)
-ACT_ARGS="-P ubuntu-latest=catthehacker/ubuntu:act-slim"
+# Use catthehacker/ubuntu:js-latest (~600MB, preloaded for Node.js JS workflows)
+ACT_ARGS="-P ubuntu-latest=catthehacker/ubuntu:js-latest"
 
-# Apply container architecture flag if Apple Silicon
 if [[ "$(uname -m)" == "arm64" ]]; then
   ACT_ARGS="$ACT_ARGS --container-architecture linux/amd64"
 fi

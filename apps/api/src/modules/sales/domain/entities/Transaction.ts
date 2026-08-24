@@ -6,7 +6,7 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'product_id' })
+  @Column({ name: 'product_id', type: 'int' })
   productId!: number;
 
   @ManyToOne(() => Product, (product) => product.transactions, { onDelete: 'CASCADE' })

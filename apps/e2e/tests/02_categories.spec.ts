@@ -7,8 +7,8 @@ test.describe('Category Management (CRUD) E2E Tests', () => {
 
   test('should render categories page and list default categories', async ({ page }) => {
     await expect(page.locator('h3')).toContainText('Daftar Jenis Barang');
-    await expect(page.getByText('Konsumsi')).toBeVisible();
-    await expect(page.getByText('Pembersih')).toBeVisible();
+    await expect(page.getByText('Konsumsi').first()).toBeVisible();
+    await expect(page.getByText('Pembersih').first()).toBeVisible();
   });
 
   test('should open add category modal and create a new category', async ({ page }) => {
@@ -17,9 +17,9 @@ test.describe('Category Management (CRUD) E2E Tests', () => {
 
     const testCategoryName = `Elektronik ${Date.now()}`;
     await page.fill('input[placeholder*="Konsumsi"]', testCategoryName);
-    await page.click('button:has-text("Simpan Kategori")');
+    await page.click('form button[type="submit"]');
 
     // Verify newly created category appears in table
-    await expect(page.getByText(testCategoryName)).toBeVisible();
+    await expect(page.getByText(testCategoryName).first()).toBeVisible();
   });
 });

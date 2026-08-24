@@ -13,9 +13,9 @@ export async function seedDatabase() {
   const transactionRepo = AppDataSource.getRepository(Transaction);
 
   // Clear existing data (in reverse dependency order)
-  await transactionRepo.delete({});
-  await productRepo.delete({});
-  await categoryRepo.delete({});
+  await transactionRepo.createQueryBuilder().delete().execute();
+  await productRepo.createQueryBuilder().delete().execute();
+  await categoryRepo.createQueryBuilder().delete().execute();
 
   // 1. Create Categories
   const konsumsiCat = categoryRepo.create({ name: 'Konsumsi' });

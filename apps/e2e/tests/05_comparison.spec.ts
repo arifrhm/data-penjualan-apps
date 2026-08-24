@@ -6,8 +6,8 @@ test.describe('Sales Comparison & Date Range Filter E2E Tests', () => {
   });
 
   test('should render category comparison cards and table', async ({ page }) => {
-    await expect(page.getByText('Konsumsi')).toBeVisible();
-    await expect(page.getByText('Pembersih')).toBeVisible();
+    await expect(page.getByText('Konsumsi').first()).toBeVisible();
+    await expect(page.getByText('Pembersih').first()).toBeVisible();
     await expect(page.getByText('Tabel Rincian Komparasi Penjualan')).toBeVisible();
   });
 

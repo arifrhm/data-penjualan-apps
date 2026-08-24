@@ -6,12 +6,12 @@ test.describe('Product Management (CRUD & Search) E2E Tests', () => {
   });
 
   test('should render products list and filter by search input', async ({ page }) => {
-    await expect(page.getByText('Kopi')).toBeVisible();
-    await expect(page.getByText('Teh')).toBeVisible();
+    await expect(page.getByText('Kopi').first()).toBeVisible();
+    await expect(page.getByText('Teh').first()).toBeVisible();
 
     // Type search query "Kopi"
     await page.fill('input[placeholder*="Cari produk"]', 'Kopi');
-    await expect(page.getByText('Kopi')).toBeVisible();
+    await expect(page.getByText('Kopi').first()).toBeVisible();
     await expect(page.getByText('Teh')).not.toBeVisible();
   });
 
@@ -22,8 +22,8 @@ test.describe('Product Management (CRUD & Search) E2E Tests', () => {
     const productName = `Snack Bar ${Date.now()}`;
     await page.fill('input[placeholder*="Kopi, Sampo"]', productName);
     await page.fill('input[type="number"]', '50');
-    await page.click('button:has-text("Simpan Barang")');
+    await page.click('form button[type="submit"]');
 
-    await expect(page.getByText(productName)).toBeVisible();
+    await expect(page.getByText(productName).first()).toBeVisible();
   });
 });

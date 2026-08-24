@@ -13,7 +13,7 @@ export class Product {
   @Column({ type: 'int', default: 0 })
   stock!: number;
 
-  @Column({ name: 'category_id' })
+  @Column({ name: 'category_id', type: 'int' })
   categoryId!: number;
 
   @ManyToOne(() => ProductCategory, (category) => category.products, { onDelete: 'CASCADE' })

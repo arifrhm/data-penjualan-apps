@@ -38,6 +38,21 @@ jobs:
     name: Run End-to-End Playwright Tests
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: data_penjualan_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,5 +76,20 @@ jobs:
       - name: Build All Packages
         run: pnpm build
 
+      - name: Seed Database
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgrespassword
+          DB_DATABASE: data_penjualan_db
+        run: pnpm seed
+
       - name: Run Playwright E2E Tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgrespassword
+          DB_DATABASE: data_penjualan_db
         run: pnpm test:e2e

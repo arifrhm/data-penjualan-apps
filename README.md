@@ -1,22 +1,22 @@
-# 🛍️ Aplikasi Data Penjualan — Monorepo DDD Modular Monolith
+# 🛍️ Sales Data Application — Monorepo DDD Modular Monolith
 
-Aplikasi Data Penjualan full-stack yang dikembangkan dengan arsitektur **Monorepo (`pnpm workspaces`)**, **Backend Node.js + Express + TypeORM (Domain-Driven Design Modular Monolith)**, **Frontend Next.js (Dark Mode Glassmorphic Dashboard)**, dan **Database PostgreSQL (Third Normal Form - 3NF)**.
-
----
-
-## 🌟 Fitur Utama & Jawaban Soal
-
-1. **Normalisasi Database (3NF)**: Data penjualan dari soal dipisah secara rapi menjadi 3 tabel (`product_categories`, `products`, `transactions`) untuk mengeliminasi redundansi data.
-2. **Backend & Frontend CRUD**: Manajemen Master Kategori, Master Produk (Stok), dan Transaksi Penjualan.
-3. **Pencarian (Search) & Pengurutan (Sorting)**: Fitur cari berdasarkan nama barang, dan pengurutan dinamis berdasarkan **Nama Barang** & **Tanggal Transaksi** (Ascending / Descending) serta Pagination.
-4. **Komparasi Penjualan Jenis Barang**: Halaman perbandingan grafik & tabel untuk jenis barang **Terbanyak Terjual vs Terendah Terjual**.
-5. **Filter Rentang Waktu**: Filter tanggal awal (`startDate`) dan tanggal akhir (`endDate`) pada halaman komparasi.
-6. **Automation & Regression Testing (Blast Radius Guard)**: Unit testing dengan Vitest dan script deteksi dampak perubahan kodingan (*blast radius guard*).
-7. **REST API Standard**: Respon JSON terstruktur dan konsisten (`ApiResponse<T>`) untuk integrasi program inter-aplikasi.
+A full-stack Sales Data Application built with a **Monorepo (`pnpm workspaces`)**, **Backend Node.js + Express + TypeORM (Domain-Driven Design Modular Monolith)**, **Frontend Next.js (Dark Mode Glassmorphic Dashboard)**, and **PostgreSQL Database (Third Normal Form - 3NF)**.
 
 ---
 
-## 📐 Arsitektur Sistem
+## 🌟 Key Features & Problem Requirements
+
+1. **Database Normalization (3NF)**: Original sales transaction data is cleanly normalized into 3 tables (`product_categories`, `products`, `transactions`) to eliminate data redundancy.
+2. **Backend & Frontend CRUD**: Comprehensive CRUD operations for Category Master, Product Master (Stock), and Sales Transactions.
+3. **Search & Sorting**: Product search by name, dynamic sorting by **Product Name** & **Transaction Date** (Ascending / Descending), with pagination.
+4. **Category Sales Comparison**: Graphical & tabular comparison page for product categories (**Highest Sales vs Lowest Sales**).
+5. **Date Range Filter**: Filter transactions and comparison data by start date (`startDate`) and end date (`endDate`).
+6. **Automation & Regression Testing (Blast Radius Guard)**: Unit testing setup with Vitest and automated change-impact detection (*blast radius guard script*).
+7. **Programmatic REST API Interface**: Standardized JSON response format (`ApiResponse<T>`) for clean integration with external applications.
+
+---
+
+## 📐 System Architecture
 
 ```
 data-penjualan-apps/
@@ -42,7 +42,7 @@ data-penjualan-apps/
 
 ---
 
-## 🗄️ Normalisasi Database (3NF Schema)
+## 🗄️ Database Normalization (3NF Schema)
 
 ```
 [product_categories] 1 --- * [products] 1 --- * [transactions]
@@ -54,12 +54,12 @@ data-penjualan-apps/
 
 ---
 
-## 🚀 Panduan Memulai (Getting Started)
+## 🚀 Getting Started
 
-### Prasyarat System
+### Prerequisites
 - **Node.js**: `>= 18.x`
 - **Package Manager**: `pnpm` (`npm i -g pnpm`)
-- **Database**: PostgreSQL (berjalan di `localhost:5432` atau cloud)
+- **Database**: PostgreSQL (running on `localhost:5432` or remote server)
 
 ### 1. Clone & Install Dependencies
 
@@ -68,13 +68,13 @@ data-penjualan-apps/
 git clone <repository-url>
 cd data-penjualan-apps
 
-# Install seluruh dependensi monorepo
+# Install all workspace dependencies
 pnpm install
 ```
 
-### 2. Konfigurasi Environment Variables
+### 2. Configure Environment Variables
 
-Salin `.env.example` menjadi `.env` di root direktori (atau sesuaikan parameter PostgreSQL):
+Copy `.env.example` to `.env` in the root directory and update your PostgreSQL credentials:
 
 ```env
 PORT=3001
@@ -89,33 +89,33 @@ DB_DATABASE=data_penjualan_db
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 ```
 
-### 3. Build & Seed Database Initial Data
+### 3. Build & Seed Initial Database Data
 
-Jalankan perintah berikut untuk membuat database schema dan mengisi 7 data awal dari soal:
+Run the following commands to build packages and populate the 7 initial transaction records from the problem statement:
 
 ```bash
-# Build shared package & aplikasi
+# Build shared package & applications
 pnpm build
 
-# Jalankan seeder data awal
+# Run database seeder
 pnpm seed
 ```
 
-### 4. Jalankan Aplikasi (Development Mode)
+### 4. Run Application (Development Mode)
 
 ```bash
 pnpm dev
 ```
 
-Aplikasi akan berjalan di:
+The application will start on:
 - **Frontend Dashboard (Next.js)**: [http://localhost:3000](http://localhost:3000)
 - **Backend REST API (Express)**: [http://localhost:3001](http://localhost:3001)
 
 ---
 
-## 🔗 Dokumentasi REST API
+## 🔗 REST API Documentation
 
-Semua endpoint mengembalikan format JSON standar:
+All API endpoints return a standardized JSON format:
 
 ```json
 {
@@ -133,41 +133,41 @@ Semua endpoint mengembalikan format JSON standar:
 
 ### Endpoints List
 
-| Method | Endpoint | Query Parameters | Deskripsi |
+| Method | Endpoint | Query Parameters | Description |
 |---|---|---|---|
-| `GET` | `/api/categories` | - | Mengambil daftar semua kategori |
-| `POST` | `/api/categories` | - | Membuat kategori baru |
-| `PUT` | `/api/categories/:id` | - | Memperbarui data kategori |
-| `DELETE` | `/api/categories/:id` | - | Menghapus kategori |
-| `GET` | `/api/products` | `?search=Kopi` | Mengambil daftar produk (dukungan pencarian) |
-| `POST` | `/api/products` | - | Membuat produk baru |
-| `PUT` | `/api/products/:id` | - | Memperbarui data produk |
-| `DELETE` | `/api/products/:id` | - | Menghapus produk |
-| `GET` | `/api/transactions` | `?search=Kopi&sortBy=name\|date&sortOrder=asc\|desc&page=1&limit=10` | Mengambil data transaksi dengan filter **Pencarian, Pengurutan, dan Pagination** |
-| `POST` | `/api/transactions` | - | Menambah transaksi baru (stok produk berkurang otomatis) |
-| `PUT` | `/api/transactions/:id` | - | Memperbarui transaksi (stok menyesuaikan) |
-| `DELETE` | `/api/transactions/:id` | - | Menghapus transaksi (stok dikembalikan) |
-| `GET` | `/api/sales/comparison` | `?type=highest\|lowest&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` | **Komparasi Penjualan Jenis Barang** dengan filter rentang waktu |
+| `GET` | `/api/categories` | - | Retrieve all categories |
+| `POST` | `/api/categories` | - | Create a new category |
+| `PUT` | `/api/categories/:id` | - | Update a category |
+| `DELETE` | `/api/categories/:id` | - | Delete a category |
+| `GET` | `/api/products` | `?search=Kopi` | Retrieve products (supports search by name) |
+| `POST` | `/api/products` | - | Create a new product |
+| `PUT` | `/api/products/:id` | - | Update a product |
+| `DELETE` | `/api/products/:id` | - | Delete a product |
+| `GET` | `/api/transactions` | `?search=Kopi&sortBy=name\|date&sortOrder=asc\|desc&page=1&limit=10` | Retrieve sales transactions with **Search, Sorting, & Pagination** |
+| `POST` | `/api/transactions` | - | Add a new transaction (automatically reduces product stock) |
+| `PUT` | `/api/transactions/:id` | - | Update a transaction (adjusts stock accordingly) |
+| `DELETE` | `/api/transactions/:id` | - | Delete a transaction (reverts stock) |
+| `GET` | `/api/sales/comparison` | `?type=highest\|lowest&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` | **Category Sales Comparison** with date range filter |
 
 ---
 
 ## 🧪 Automation & Regression Testing
 
-Aplikasi ini menggunakan **Vitest** untuk pengujian otomatis pada layer domain & application.
+This repository uses **Vitest** for unit & application service testing.
 
 ```bash
-# 1. Jalankan semua unit test suite
+# 1. Run all unit test suites
 pnpm test
 
-# 2. Smart Blast Radius Test (hanya menguji berkas yang berubah via git diff)
+# 2. Smart Blast Radius Test (runs tests only for files modified in git diff)
 pnpm test:changed
 
-# 3. Running Pre-commit Guard script
+# 3. Pre-commit Guard script
 ./scripts/blast-radius-check.sh
 ```
 
 ---
 
-## 📄 Lisensi
+## 📄 License
 
 MIT License.

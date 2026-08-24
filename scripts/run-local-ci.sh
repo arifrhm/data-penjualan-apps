@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (Alpine)"
-echo "========================================================="
+echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (Debian Slim)"
+echo "============================================================="
 
 # Auto-detect active Docker socket (supports OrbStack, Docker Desktop, Colima, standard socket)
 if [ -z "$DOCKER_HOST" ]; then
@@ -60,7 +60,7 @@ echo ""
 act -l
 echo ""
 
-# Clean corrupt act action cache if requested or needed
+# Clean corrupt act action cache if requested
 if [[ "$1" == "--clean-cache" ]]; then
   echo "🧹 Cleaning act action cache (~/.cache/act)..."
   rm -rf "$HOME/.cache/act"
@@ -76,14 +76,15 @@ if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
   exit 0
 fi
 
-echo "📦 Running CI/CD using lightweight Alpine container (node:20-alpine)..."
-echo "--------------------------------------------------------------------"
+echo "📦 Running CI/CD using lightweight Debian Slim container (node:20-slim)..."
+echo "------------------------------------------------------------------------"
 
-# Use lightweight node:20-alpine image to save disk space
-ACT_ARGS="-P ubuntu-latest=node:20-alpine"
+# Use lightweight node:20-slim (Debian glibc, ~200MB, has bash & glibc compatibility)
+ACT_ARGS="-P ubuntu-latest=node:20-slim"
 
+# Native architecture execution for Apple Silicon arm64 or x86
 if [[ "$(uname -m)" == "arm64" ]]; then
-  ACT_ARGS="$ACT_ARGS --container-architecture linux/amd64"
+  ACT_ARGS="$ACT_ARGS --container-architecture linux/arm64"
 fi
 
 act push $ACT_ARGS --reuse

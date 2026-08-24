@@ -13,7 +13,8 @@
     "test:api": "pnpm --filter api test",
     "test": "pnpm --filter api test",
     "test:changed": "pnpm --filter api test --changed",
-    "test:e2e": "pnpm --filter e2e test"
+    "test:e2e": "pnpm --filter e2e test",
+    "test:ci-local": "./scripts/run-local-ci.sh"
   },
   "devDependencies": {
     "typescript": "^5.3.3"

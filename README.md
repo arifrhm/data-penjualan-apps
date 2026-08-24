@@ -133,6 +133,9 @@ pnpm test:e2e
 
 # 4. Pre-commit Guard script
 ./scripts/blast-radius-check.sh
+
+# 5. Run GitHub Actions CI/CD pipeline locally via nektos/act
+./scripts/run-local-ci.sh   # or pnpm test:ci-local
 ```
 
 ---

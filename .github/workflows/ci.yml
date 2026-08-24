@@ -7,8 +7,8 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
-  test:
-    name: Run Automated Tests & Blast Radius Guard
+  unit-test:
+    name: Run Unit Tests & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -25,27 +25,41 @@ jobs:
         with:
           version: 10.13.1
 
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
+      - name: Build Shared Package & Monorepo
+        run: pnpm build
+
+      - name: Run Unit Tests
+        run: pnpm test
+
+  e2e-test:
+    name: Run End-to-End Playwright Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.13.1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Shared Package
-        run: pnpm build:shared
+      - name: Install Playwright Browsers
+        run: pnpm --filter e2e exec playwright install --with-deps chromium
 
-      - name: Build Backend & Frontend
+      - name: Build All Packages
         run: pnpm build
 
-      - name: Run Unit & Regression Tests
-        run: pnpm test
+      - name: Run Playwright E2E Tests
+        run: pnpm test:e2e

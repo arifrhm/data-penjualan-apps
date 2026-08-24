@@ -11,7 +11,7 @@ A full-stack Sales Data Application built with a **Monorepo (`pnpm workspaces`)*
 3. **Search & Sorting**: Product search by name, dynamic sorting by **Product Name** & **Transaction Date** (Ascending / Descending), with pagination.
 4. **Category Sales Comparison**: Graphical & tabular comparison page for product categories (**Highest Sales vs Lowest Sales**).
 5. **Date Range Filter**: Filter transactions and comparison data by start date (`startDate`) and end date (`endDate`).
-6. **Automation & Regression Testing (Blast Radius Guard)**: Unit testing setup with Vitest and automated change-impact detection (*blast radius guard script*).
+6. **Automation & E2E Testing Workspace**: Unit testing with Vitest and End-to-End browser testing with **Playwright**.
 7. **Programmatic REST API Interface**: Standardized JSON response format (`ApiResponse<T>`) for clean integration with external applications.
 
 ---
@@ -24,21 +24,27 @@ data-penjualan-apps/
 │   └── shared/                 # Contract DTOs, Zod Validation, API Interfaces
 ├── apps/
 │   ├── api/                    # Express Backend (DDD Bounded Contexts)
-│   │   ├── src/
-│   │   │   ├── core/           # Config, Database, Custom Errors, Middleware
-│   │   │   └── modules/        # Domain Modules (Catalog & Sales)
-│   │   │       ├── catalog/    # Product & Category Bounded Context
-│   │   │       └── sales/      # Transaction & Comparison Bounded Context
-│   └── web/                    # Next.js 14 Frontend Dashboard
-│       ├── src/
-│       │   ├── app/            # App Router Pages (Dashboard, CRUD, Comparison)
-│       │   ├── components/     # UI & Layout Glassmorphism Components
-│       │   └── hooks/          # React Custom Hooks for API consumption
+│   ├── web/                    # Next.js 14 Frontend Dashboard
+│   └── e2e/                    # Playwright E2E Testing Workspace 🎭
 ├── .github/
-│   └── workflows/ci.yml        # GitHub Actions Automated CI & Regression Testing
+│   └── workflows/ci.yml        # GitHub Actions CI for Unit & E2E Testing
 └── scripts/
     └── blast-radius-check.sh   # Smart Regression Test Guard Script
 ```
+
+---
+
+## 🎭 E2E Testing Workspace & Test Coverage Matrix
+
+The `apps/e2e` workspace contains automated browser tests using **Playwright** covering all possible user flows and edge cases:
+
+| Test Suite | Spec File | Possibility Coverage |
+|---|---|---|
+| **Dashboard** | `01_dashboard.spec.ts` | Stat cards rendering, Recent transaction table, Navigation |
+| **Category CRUD** | `02_categories.spec.ts` | List default categories, Create new category, Form validations |
+| **Product CRUD** | `03_products.spec.ts` | List products, Create product with stock, Search product by name |
+| **Transactions** | `04_transactions.spec.ts` | Create transaction (auto stock reduction), **Search by Product Name**, **Sort by Name**, **Sort by Date**, Pagination |
+| **Comparison & Filters** | `05_comparison.spec.ts` | **Highest vs Lowest Sales Toggle**, **Date Range Filter (`startDate` & `endDate`)**, Filter Reset |
 
 ---
 
@@ -113,56 +119,19 @@ The application will start on:
 
 ---
 
-## 🔗 REST API Documentation
-
-All API endpoints return a standardized JSON format:
-
-```json
-{
-  "success": true,
-  "data": [...],
-  "message": "Success message",
-  "meta": {
-    "total": 7,
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
-  }
-}
-```
-
-### Endpoints List
-
-| Method | Endpoint | Query Parameters | Description |
-|---|---|---|---|
-| `GET` | `/api/categories` | - | Retrieve all categories |
-| `POST` | `/api/categories` | - | Create a new category |
-| `PUT` | `/api/categories/:id` | - | Update a category |
-| `DELETE` | `/api/categories/:id` | - | Delete a category |
-| `GET` | `/api/products` | `?search=Kopi` | Retrieve products (supports search by name) |
-| `POST` | `/api/products` | - | Create a new product |
-| `PUT` | `/api/products/:id` | - | Update a product |
-| `DELETE` | `/api/products/:id` | - | Delete a product |
-| `GET` | `/api/transactions` | `?search=Kopi&sortBy=name\|date&sortOrder=asc\|desc&page=1&limit=10` | Retrieve sales transactions with **Search, Sorting, & Pagination** |
-| `POST` | `/api/transactions` | - | Add a new transaction (automatically reduces product stock) |
-| `PUT` | `/api/transactions/:id` | - | Update a transaction (adjusts stock accordingly) |
-| `DELETE` | `/api/transactions/:id` | - | Delete a transaction (reverts stock) |
-| `GET` | `/api/sales/comparison` | `?type=highest\|lowest&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` | **Category Sales Comparison** with date range filter |
-
----
-
-## 🧪 Automation & Regression Testing
-
-This repository uses **Vitest** for unit & application service testing.
+## 🧪 Running Tests
 
 ```bash
-# 1. Run all unit test suites
+# 1. Run Unit Tests (Vitest)
 pnpm test
 
-# 2. Smart Blast Radius Test (runs tests only for files modified in git diff)
+# 2. Run Smart Regression Test (affected files only via git diff)
 pnpm test:changed
 
-# 3. Pre-commit Guard script
+# 3. Run Playwright E2E Tests
+pnpm test:e2e
+
+# 4. Pre-commit Guard script
 ./scripts/blast-radius-check.sh
 ```
 

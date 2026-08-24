@@ -12,7 +12,8 @@
     "seed": "pnpm --filter api seed",
     "test:api": "pnpm --filter api test",
     "test": "pnpm --filter api test",
-    "test:changed": "pnpm --filter api test --changed"
+    "test:changed": "pnpm --filter api test --changed",
+    "test:e2e": "pnpm --filter e2e test"
   },
   "devDependencies": {
     "typescript": "^5.3.3"

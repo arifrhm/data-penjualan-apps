@@ -17,7 +17,6 @@ if [ -z "$DOCKER_HOST" ]; then
   elif [ -S "$DOCKER_DESKTOP_SOCKET" ]; then
     export DOCKER_HOST="unix://$DOCKER_DESKTOP_SOCKET"
   else
-    # Try getting endpoint from docker context
     CONTEXT_ENDPOINT=$(docker context inspect --format '{{.Endpoints.docker.Host}}' 2>/dev/null || true)
     if [ -n "$CONTEXT_ENDPOINT" ]; then
       export DOCKER_HOST="$CONTEXT_ENDPOINT"
@@ -60,6 +59,14 @@ echo ""
 # 3. List GitHub Actions jobs
 act -l
 echo ""
+
+# Clean corrupt act action cache if requested or needed
+if [[ "$1" == "--clean-cache" ]]; then
+  echo "🧹 Cleaning act action cache (~/.cache/act)..."
+  rm -rf "$HOME/.cache/act"
+  echo "✅ Cache cleaned!"
+  exit 0
+fi
 
 # Dry-run option
 if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 Local GitHub Actions CI/CD Tester (using nektos/act)"
-echo "======================================================="
+echo "🚀 Lightweight Local GitHub Actions CI/CD Tester (using nektos/act)"
+echo "===================================================================="
 
 # 1. Check Docker prerequisite
 if ! command -v docker &> /dev/null; then
@@ -37,18 +37,30 @@ echo "📋 Defined Workflows / Jobs in .github/workflows/ci.yml:"
 act -l
 
 echo ""
+# Allow dry-run option (-n)
+if [[ "$1" == "--dry-run" || "$1" == "-n" ]]; then
+  echo "🔍 Dry-run mode enabled (-n). Verifying workflow syntax without pulling images..."
+  act push -n
+  echo "✅ Workflow syntax is valid!"
+  exit 0
+fi
+
+# Use lightweight / micro image (node:20-alpine or catthehacker/ubuntu:act-slim) to save disk space
+LIGHTWEIGHT_IMAGE="${2:-node:20-alpine}"
+
+echo "📦 Using lightweight image for local runner to save disk space: $LIGHTWEIGHT_IMAGE"
 echo "▶️ Running local CI/CD push event trigger..."
-echo "-------------------------------------------------------"
+echo "--------------------------------------------------------------------"
 
-# Detect architecture (Apple Silicon / arm64 adjustment)
-ACT_ARGS="-P ubuntu-latest=catthehacker/ubuntu:act-latest"
+ACT_ARGS="-P ubuntu-latest=$LIGHTWEIGHT_IMAGE"
 
+# Detect Apple Silicon (arm64)
 if [[ "$(uname -m)" == "arm64" ]]; then
   echo "🍏 Detected Apple Silicon (arm64). Applying container architecture flags..."
   ACT_ARGS="$ACT_ARGS --container-architecture linux/amd64"
 fi
 
-# Execute act push event
+# Execute act with lightweight container
 act push $ACT_ARGS --reuse
 
 echo ""
